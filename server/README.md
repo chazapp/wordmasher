@@ -80,3 +80,7 @@ wordmash=# COPY words(word) FROM '/tmp/dataset.txt';
 COPY 20
 ```
 
+  
+Test the game with [Insomnia](https://insomnia.rest) WebSocket testing tool over at `ws://localhost:8080/ws`
+
+![image](https://github.com/chazapp/wordmasher/assets/15686688/c1c3f2c2-1c7c-4633-ab84-62ecc7b0ce0c)  
