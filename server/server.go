@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/chazapp/wordmasher/server/models"
+	"github.com/chazapp/wordmasher/server/ws"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
@@ -26,15 +27,12 @@ var (
 	SQLMaxConnections = 100
 )
 
-func NewWordMashAPIEngine(db *gorm.DB, allowedOrigins []string) *gin.Engine {
+func NewWordMashAPIEngine(db *gorm.DB, allowedOrigins []string, wsHub *ws.Hub) *gin.Engine {
 	r := gin.New()
 	r.Use(otelgin.Middleware("wall-api"))
 	r.Use(gin.Recovery())
 
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	/*metricsMiddleware := middleware.New(middleware.Config{
-		Recorder: prometheus.NewRecorder(prometheus.Config{}),
-	})*/
 
 	//mr := api.NewMessageRouter(db, wsHub)
 	//sr := api.NewStatusRouter(db, wsHub, Version)
@@ -68,6 +66,7 @@ func NewWordMashAPIEngine(db *gorm.DB, allowedOrigins []string) *gin.Engine {
 		AllowMethods:     []string{"GET", "POST"},
 		AllowHeaders:     []string{"*"},
 	}))
+	r.GET("/ws", wsHub.WsHandler)
 	return r
 }
 
@@ -75,7 +74,9 @@ func API(dbUser, dbPassword, dbHost, dbName string,
 	port int, opsPort int, allowedOrigins []string, otlpEndpoint string) error {
 
 	db := initDB(dbUser, dbPassword, dbHost, dbName, otlpEndpoint)
-	r := NewWordMashAPIEngine(db, allowedOrigins)
+	wsHub := ws.NewHub(db)
+	go wsHub.Heartbeat()
+	r := NewWordMashAPIEngine(db, allowedOrigins, wsHub)
 
 	opsRouter := NewOpsEngine()
 
