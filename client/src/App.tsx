@@ -1,8 +1,11 @@
 import React from 'react';
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import Menu from "./components/Menu";
+import PlayCard from './components/PlayCard';
 
-function App() {
+function App(props: {apiURL: string, clientVersion: string}) {
+  const { apiURL }= props;
+
   return (
     <Box id="app" sx={{
       width: "100vw",
@@ -21,16 +24,16 @@ function App() {
         width: "100%"
       }}>
         <Box id="play-card" sx={{
-          backgroundColor: "darkblue",
+          backgroundColor: "#5e5d5d",
           width: "50%",
           height: "50%",
-          borderRadius: "15px",
+          borderRadius: "30px",
           boxShadow: "0 0 10px rgba(0,0,0,0.1)",
           display: "flex",
           flexDirection: "row",
           justifyContent: "center"
         }}>
-          <Typography variant="h2">Play</Typography>
+          <PlayCard apiURL={apiURL} />
         </Box>
       </Box>
     </Box>

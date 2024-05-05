@@ -5,7 +5,7 @@ type NickMessage struct {
 }
 
 type WordmashMessage struct {
-	Wordmash string `json:"wordmash"`
+	Wordmash string `json:"wordmash" binding:"required"`
 }
 
 type AnswerMessage struct {
