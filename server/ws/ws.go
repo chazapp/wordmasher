@@ -151,6 +151,8 @@ func ShuffleWord(word string) string {
 	rand.Shuffle(len(characters), func(i, j int) {
 		characters[i], characters[j] = characters[j], characters[i]
 	})
-
+	if string(characters) == word {
+		return ShuffleWord(word)
+	}
 	return string(characters)
 }
