@@ -44,11 +44,15 @@ export default function PlayCard(props: {apiURL: string}) {
 
 
     const handleSubmitNick = ((nick: string) => {
-        webSocket?.send(JSON.stringify({nickname: nick}))
+        if (webSocket) {
+            webSocket.send(JSON.stringify({nickname: nick}))
+        }
     });
 
     const handleSubmitAnswer = ((answer: string) => {
-        webSocket?.send(JSON.stringify({answer: answer}));
+        if (webSocket) {
+            webSocket.send(JSON.stringify({answer: answer}));
+        }
     })
 
 
@@ -59,9 +63,15 @@ export default function PlayCard(props: {apiURL: string}) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    flexDirection: "column",
+                    gap: "2vh"
                 }}>
+                    {errMessage && (
+                        <Typography variant="h5" color="error">{errMessage}</Typography>
+                    )}
                     <TextField 
-                        label="Nickname" variant="outlined"
+                        label="Nickname" variant="outlined" autoComplete="off"
+                        disabled={errMessage !== "" ? true : false}
                         inputProps={{ style: {textAlign: 'center'} }}
                         sx={{
                             "& label.Mui-focused": {
@@ -97,7 +107,7 @@ export default function PlayCard(props: {apiURL: string}) {
                 >
                     <Typography>{mash}</Typography>
                     <TextField 
-                        label="Answer" variant="outlined"
+                        label="Answer" variant="outlined" autoComplete="off"
                         inputProps={{ style: {textAlign: 'center'} }}
                         sx={{
                             "& label.Mui-focused": {
