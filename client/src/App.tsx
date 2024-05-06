@@ -10,7 +10,8 @@ function App(props: {apiURL: string, clientVersion: string}) {
     <Box id="app" sx={{
       width: "100vw",
       height: "100vh",
-      backgroundColor: "black",
+      backgroundImage: 'url("/background.png")',
+      backgroundSize: "cover",
       display: "flex",
       flexDirection: "row"
     }}>
