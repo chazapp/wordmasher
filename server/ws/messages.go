@@ -1,11 +1,11 @@
 package ws
 
 type NickMessage struct {
-	Nick string `json:"nick"`
+	Nick string `json:"nickname"`
 }
 
 type WordmashMessage struct {
-	Wordmash string `json:"wordmash" binding:"required"`
+	Wordmash string `json:"wordmash"`
 }
 
 type AnswerMessage struct {

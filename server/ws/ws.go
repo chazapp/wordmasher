@@ -33,7 +33,7 @@ var (
 type Client struct {
 	hub      *Hub
 	conn     *websocket.Conn
-	nickname *string
+	nickname string
 }
 
 type Hub struct {
@@ -93,17 +93,20 @@ func (h *Hub) WsHandler(c *gin.Context) {
 func (c *Client) GameSession() {
 	defer c.conn.Close()
 
-	log.Info().Msg("Created Game Session")
+	log.Info().Msg("> Created Game Session, waiting for username")
 	// Get user nickname
 	nickMessage := NickMessage{}
-	log.Info().Msg("Waiting for player nickname")
-	err := c.conn.ReadJSON(&nickMessage)
-	if err != nil {
+	if err := c.conn.ReadJSON(&nickMessage); err != nil {
 		log.Err(err).Msg("")
 		return
 	}
-	c.nickname = &nickMessage.Nick
-	log.Info().Msgf("Nick joined: %s", *c.nickname)
+	if nickMessage.Nick == "" {
+		log.Error().Msg("!> No username sent. Stopping here !")
+		c.conn.Close()
+		return
+	}
+	c.nickname = nickMessage.Nick
+	log.Info().Msgf("%s> Player joined", c.nickname)
 	// Game loop
 	for {
 		// Create a wordmash
@@ -112,26 +115,29 @@ func (c *Client) GameSession() {
 		wmM := WordmashMessage{Wordmash: ShuffleWord(w.Word)}
 		for {
 			// Send wordmash
-			log.Info().Msgf("Sending mash")
+			log.Info().Msgf("%s> Sending mash %s for word %s", c.nickname, wmM.Wordmash, w.Word)
 			if err := c.conn.WriteJSON(&wmM); err != nil {
 				log.Err(err).Msg("")
 				return
 			}
 			// Await answer
 			aM := AnswerMessage{}
-			log.Info().Msgf("Awaiting answer")
+			log.Info().Msgf("%s> Awaiting answer", c.nickname)
 			if err := c.conn.ReadJSON(&aM); err != nil {
 				log.Err(err).Msg("")
 				return
 			}
+			log.Info().Msgf("%s> Answer: %s", c.nickname, aM.Answer)
 			if aM.Answer == w.Word {
 				// Send success message
+				log.Info().Msgf("%s> Success !", c.nickname)
 				if err := c.conn.WriteJSON(SuccessMessage{Success: true}); err != nil {
 					log.Err(err).Msg("")
 					return
 				}
 				break
 			}
+			log.Info().Msgf("%s> Fail !", c.nickname)
 			if err := c.conn.WriteJSON(SuccessMessage{Success: false}); err != nil {
 				log.Err(err).Msg("")
 				return
