@@ -68,7 +68,7 @@ postgresql:
   user: myuser
   password: mypassword
   database: wordmasher
-  storageClassName: standard
+  storageClassName: default
   storageSize: 1Gi
 
 resources: {}
