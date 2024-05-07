@@ -15,7 +15,7 @@ function App(props: {apiURL: string, clientVersion: string}) {
       display: "flex",
       flexDirection: "row"
     }}>
-      <Box id="breathing-room" sx={{width: "15vw", height: "100vh"}} />
+      <Box id="breathing-room" sx={{width: "5vw", height: "100vh"}} />
       <Menu />
       <Box id="play-area" sx={{
         display: "flex",
