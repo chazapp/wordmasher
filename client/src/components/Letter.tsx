@@ -21,7 +21,7 @@ export default function Letter(props: { letter: string, submitState: Submit }) {
     }, [submitState])
     return (
         <Paper className={bgAnimClass} elevation={3} sx={{
-            padding: "5%",
+            padding: "0.5rem",
             border: "0.15rem solid black",
             backgroundColor: "yellow"
         }}>

@@ -109,16 +109,20 @@ export default function PlayCard(props: {apiURL: string}) {
                         justifyContent: "center",
                         flexDirection: "column",
                         gap: "5vh",
-                        width: "100%"
+                        width: "100%",
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        flexBasis: "auto"
                     }}
                 >
                     <Box sx={{
                         display: "flex",
-                        gap: "2rem",
+                        gap: "1rem",
                         alignItems: "center",
                         justifyContent: "center",
                         flexDirection: "row",
-                        flexShrink: 1
+                        flexBasis: "auto",
+                        width: "100%",
                     }}>
                         {[...mash].map((c, idx) => {
                             return (
