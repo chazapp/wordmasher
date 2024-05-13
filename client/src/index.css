@@ -11,3 +11,29 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@keyframes fadeFail {
+  0% {
+    background-color: red;
+  }
+  100% {
+    background-color: yellow;
+  }
+}
+
+@keyframes fadeSuccess {
+  0% {
+    background-color: green;
+  }
+  100% {
+    background-color: yellow;
+  }
+}
+
+.fade-fail {
+  animation: fadeFail 1s ease-in-out forwards;
+}
+
+.fade-success {
+  animation: fadeSuccess 1s ease-in-out forwards;
+}

@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Box, TextField, Typography } from "@mui/material";
 import { httpUrlToWebSocketUrl } from '../utils';
+import Letter from './Letter';
 
 enum GameState {
     NICKNAME,
     PLAY
+}
+
+export enum Submit {
+    NEUTRAL,
+    SUCCESS,
+    FAIL
 }
 
 export default function PlayCard(props: {apiURL: string}) {
@@ -15,6 +22,7 @@ export default function PlayCard(props: {apiURL: string}) {
     const [webSocket, setWebSocket] = useState<WebSocket | undefined>(undefined)
     const [errMessage, setErrMessage] = useState<string>('')
     const [mash, setMash] = useState<string>('');
+    const [submitState, setSubmitState] = useState<Submit>(Submit.NEUTRAL);
 
     useEffect(() => {
         if (webSocket !== undefined) {
@@ -31,11 +39,10 @@ export default function PlayCard(props: {apiURL: string}) {
           if (msg.hasOwnProperty("wordmash")) {
             setMash(msg.wordmash);
           } else if (msg.hasOwnProperty("success")) {
-            if (msg.success) {
-                console.log("Success !");
-            } else {
-                console.log("fail!");
-            }
+            msg.success ? setSubmitState(Submit.SUCCESS) : setSubmitState(Submit.FAIL);
+            setTimeout(() => {
+                setSubmitState(Submit.NEUTRAL);
+            }, 1000)
           }
 
         }
@@ -64,7 +71,6 @@ export default function PlayCard(props: {apiURL: string}) {
                     alignItems: "center",
                     justifyContent: "center",
                     flexDirection: "column",
-                    gap: "2vh"
                 }}>
                     {errMessage && (
                         <Typography variant="h5" color="error">{errMessage}</Typography>
@@ -102,10 +108,28 @@ export default function PlayCard(props: {apiURL: string}) {
                         alignItems: "center",
                         justifyContent: "center",
                         flexDirection: "column",
-                        gap: "2vh"
+                        gap: "5vh",
+                        width: "100%",
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        flexBasis: "auto"
                     }}
                 >
-                    <Typography>{mash}</Typography>
+                    <Box sx={{
+                        display: "flex",
+                        gap: "1rem",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "row",
+                        flexBasis: "auto",
+                        width: "100%",
+                    }}>
+                        {[...mash].map((c, idx) => {
+                            return (
+                                <Letter letter={c} submitState={submitState} key={idx} />
+                            )
+                        })}
+                    </Box>
                     <TextField 
                         label="Answer" variant="outlined" autoComplete="off"
                         inputProps={{ style: {textAlign: 'center'} }}
