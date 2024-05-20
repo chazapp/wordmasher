@@ -127,24 +127,36 @@ func (c *Client) GameSession() {
 				log.Err(err).Msg("")
 				return
 			}
-			log.Info().Msgf("%s> Answer: %s", c.nickname, aM.Answer)
-			if aM.Answer == w.Word {
-				// Send success message
-				log.Info().Msgf("%s> Success !", c.nickname)
-				if err := c.conn.WriteJSON(SuccessMessage{Success: true}); err != nil {
+			if aM.Command != "" {
+				log.Info().Msgf("%s> Command: %s", c.nickname, aM.Command)
+				if aM.Command == "refresh" {
+					break
+				} else if aM.Command == "hint" {
+					sanitizedDefinition := SanitizeDefinition(w.Word, GetWordDefinition(w.Word))
+					if err := c.conn.WriteJSON(HintMessage{Hint: sanitizedDefinition}); err != nil {
+						log.Err(err).Msg("")
+						return
+					}
+				}
+			} else {
+				log.Info().Msgf("%s> Answer: %s", c.nickname, aM.Answer)
+				if aM.Answer == w.Word {
+					// Send success message
+					log.Info().Msgf("%s> Success !", c.nickname)
+					if err := c.conn.WriteJSON(SuccessMessage{Success: true}); err != nil {
+						log.Err(err).Msg("")
+						return
+					}
+					c.ScoreUp()
+					break
+				}
+				log.Info().Msgf("%s> Fail !", c.nickname)
+				if err := c.conn.WriteJSON(SuccessMessage{Success: false}); err != nil {
 					log.Err(err).Msg("")
 					return
 				}
-				break
-			}
-			log.Info().Msgf("%s> Fail !", c.nickname)
-			if err := c.conn.WriteJSON(SuccessMessage{Success: false}); err != nil {
-				log.Err(err).Msg("")
-				return
 			}
 		}
-		// Score up
-		c.ScoreUp()
 	}
 }
 
