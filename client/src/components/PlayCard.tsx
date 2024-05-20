@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, IconButton, TextField, Typography } from "@mui/material";
+import RefreshIcon from '@mui/icons-material/Refresh';
+import CachedIcon from '@mui/icons-material/Cached';
 import { httpUrlToWebSocketUrl } from '../utils';
 import Letter from './Letter';
+import Quiz from '@mui/icons-material/Quiz';
 
 enum GameState {
     NICKNAME,
@@ -23,6 +26,7 @@ export default function PlayCard(props: {apiURL: string}) {
     const [errMessage, setErrMessage] = useState<string>('')
     const [mash, setMash] = useState<string>('');
     const [submitState, setSubmitState] = useState<Submit>(Submit.NEUTRAL);
+    const [hint, setHint] = useState<string>("");
 
     useEffect(() => {
         if (webSocket !== undefined) {
@@ -33,32 +37,55 @@ export default function PlayCard(props: {apiURL: string}) {
           setErrMessage('WebSocket error !')
         }
         ws.onmessage = (event) => {
-          console.log(event.data)
           setGameState(GameState.PLAY);
           const msg = JSON.parse(event.data);
           if (msg.hasOwnProperty("wordmash")) {
             setMash(msg.wordmash);
+          } else if (msg.hasOwnProperty("hint")) {
+            setHint(msg.hint);
           } else if (msg.hasOwnProperty("success")) {
-            msg.success ? setSubmitState(Submit.SUCCESS) : setSubmitState(Submit.FAIL);
+            if (msg.success === true) {
+                setSubmitState(Submit.SUCCESS);
+                setHint("");
+            } else {
+                setSubmitState(Submit.FAIL);
+            }
             setTimeout(() => {
                 setSubmitState(Submit.NEUTRAL);
-            }, 1000)
-          }
-
+            }, 1000);
+          } 
         }
-        setWebSocket(ws)
+        setWebSocket(ws);
       }, [apiURL, webSocket]);
 
 
     const handleSubmitNick = ((nick: string) => {
         if (webSocket) {
-            webSocket.send(JSON.stringify({nickname: nick}))
+            webSocket.send(JSON.stringify({nickname: nick}));
         }
     });
 
     const handleSubmitAnswer = ((answer: string) => {
         if (webSocket) {
             webSocket.send(JSON.stringify({answer: answer}));
+        }
+    });
+
+    const handleSubmitRefresh = (() => {
+        if (webSocket) {
+            webSocket.send(JSON.stringify({command: "refresh"}));
+            setHint("");
+        }
+    });
+
+    const handleClientShuffle = (() => {
+        const shuffle = () => [...mash].sort(()=>Math.random()-.5).join('');
+        setMash(shuffle);
+    })
+
+    const handleRequestHint = (() => {
+        if (webSocket) {
+            webSocket.send(JSON.stringify({command: "hint"}));
         }
     })
 
@@ -153,6 +180,27 @@ export default function PlayCard(props: {apiURL: string}) {
                             }
                         }}
                         />
+                    <Box sx={{
+                        margin: "0 auto",
+                        width: "80%",
+                        textAlign: "center"
+                    }}>
+                        {hint !== "" && <Typography variant="subtitle1" sx={{fontStyle: "italic"}}>{hint}</Typography>}
+                    </Box>    
+                    <Box sx={{
+                        display: "flex",
+                        flexDirection: "row"
+                    }}>
+                        <IconButton aria-label="refresh" size="large" onClick={handleSubmitRefresh}>
+                            <RefreshIcon fontSize="inherit"/>
+                        </IconButton>
+                        <IconButton aria-label="shuffle" size="large" onClick={handleClientShuffle}>
+                            <CachedIcon fontSize="inherit"/>
+                        </IconButton>
+                        <IconButton aria-label="hint" size="large" onClick={handleRequestHint}>
+                            <Quiz fontSize="inherit"/>
+                        </IconButton>
+                    </Box>
                 </Box>
             )
     }

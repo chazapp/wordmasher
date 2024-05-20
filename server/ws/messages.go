@@ -9,7 +9,8 @@ type WordmashMessage struct {
 }
 
 type AnswerMessage struct {
-	Answer string `json:"answer"`
+	Answer  string `json:"answer"`
+	Command string `json:"command"`
 }
 
 type SuccessMessage struct {
@@ -19,4 +20,8 @@ type SuccessMessage struct {
 type ScoreMessage struct {
 	Nick  string `json:"nick"`
 	Score int    `json:"score"`
+}
+
+type HintMessage struct {
+	Hint string `json:"hint"`
 }
