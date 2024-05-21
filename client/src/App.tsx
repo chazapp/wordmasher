@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Menu from "./components/Menu";
 import PlayCard from './components/PlayCard';
 
@@ -10,11 +10,17 @@ function App(props: {apiURL: string, clientVersion: string}) {
     <Box id="app" sx={{
       width: "100vw",
       height: "100vh",
-      backgroundImage: 'url("/background.png")',
+      backgroundImage: 'url("/textures/blue.png")',
       backgroundSize: "cover",
       display: "flex",
       flexDirection: "row"
     }}>
+      <Box id="mobile-title" sx={{
+        display: "none", width: "100%", height: "10vh",  backgroundImage: 'url("/textures/orange.png")',
+        backgroundColor: "#973302", alignItems: "center", justifyContent: "center"
+      }}>
+        <Typography variant="h3">WordMasher</Typography>
+      </Box>
       <Box id="breathing-room" sx={{width: "5vw", height: "100vh"}} />
       <Menu />
       <Box id="play-area" sx={{
@@ -25,7 +31,7 @@ function App(props: {apiURL: string, clientVersion: string}) {
         width: "100%"
       }}>
         <Box id="play-card" sx={{
-          backgroundColor: "#5e5d5d",
+          backgroundImage: 'url("/textures/light_blue.png")',
           width: "50%",
           height: "50%",
           borderRadius: "30px",

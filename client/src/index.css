@@ -37,3 +37,27 @@ code {
 .fade-success {
   animation: fadeSuccess 1s ease-in-out forwards;
 }
+
+@media only screen and (max-width: 600px) {
+  #app {
+    flex-direction: column;
+  }
+  #mobile-title {
+    display: inherit;
+  }
+  #menu {
+    display: none;
+  }
+  #breathing-room {
+    display: none;
+  }
+  #play-card {
+    width: 90%;
+  }
+}
+
+@media only screen and (max-height: 500px) {
+  #play-card {
+    height: 80%;
+  }
+}

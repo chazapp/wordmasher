@@ -5,7 +5,7 @@ export default function Menu(props: any) {
         <Box id="menu" sx={{
             width: "20vw",
             height: "100vh",
-            backgroundColor: "#973302",
+            backgroundImage: 'url("/textures/orange.png")',
             display: "flex",
             flexDirection: "column",
             gap: "5vh",
